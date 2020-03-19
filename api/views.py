@@ -23,8 +23,18 @@ class MovieViewSet(viewsets.ModelViewSet):
         """
         A function that allows the user to rate a movie
         """
-        response = {'message': 'It\'s working'}
-        return Response(response, status=status.HTTP_200_OK)
+        if 'stars' in request.data:
+            # We display this message if there are stars in request to rate the movie
+            # and we print the movie title if the request is successful
+            movie = Movie.objects.get(id=pk)
+            print('Movie title:', movie.title)
+
+            response = {'message': 'It\'s working'}
+            return Response(response, status=status.HTTP_200_OK)
+        else:
+            # We display this message if the user hasn't provided a star rating
+            response = {'message': 'You need to provide stars'}
+            return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
 
 class RatingViewSet(viewsets.ModelViewSet):
