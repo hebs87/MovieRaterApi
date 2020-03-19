@@ -11,6 +11,37 @@ class Movie(models.Model):
     title = models.CharField(max_length=32)
     description = models.TextField(max_length=360)
 
+    def no_of_ratings(self):
+        """
+        A function that calculates the total number of ratings for the movie
+        """
+        # Filter the movie in the Rating model that matches the queried movie
+        ratings = Rating.objects.filter(movie=self)
+        # Return the length of the array, which give us the number of ratings
+        return len(ratings)
+
+    def avg_rating(self):
+        """
+        A function that calculates the average rating of a particular movie
+        """
+        ratings = Rating.objects.filter(movie=self)
+        # We set the sum to 0, loop over the ratings and add the stars to the sum
+        sum = 0
+
+        for rating in ratings:
+            sum += rating.stars
+
+        # If there are ratings, then we calculate the int average. If not, we return 0
+        if len(ratings) > 0:
+            avg = int(sum / len(ratings))
+        else:
+            avg = 0
+
+        return avg
+
+    def __str__(self):
+        return self.title
+
 
 class Rating(models.Model):
     """
@@ -33,3 +64,6 @@ class Rating(models.Model):
         unique_together = (('user', 'movie'),)
         # Indexes the user and movie values together
         index_together = (('user', 'movie'),)
+
+    def __str__(self):
+        return '{} gave {} a {} star rating'.format(self.user, self.movie, self.stars)
