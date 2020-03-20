@@ -1,5 +1,28 @@
+from django.contrib.auth.models import User
 from rest_framework import serializers
 from .models import Movie, Rating
+
+
+class UserSerializer(serializers.ModelSerializer):
+    """
+    A serializer to serialize the user data and create a new
+    user record in the database (registration functionality)
+    """
+    class Meta:
+        model = User
+        # The password is automatically hashed
+        fields = ('id', 'username', 'password')
+        # We use the extra_kwargs for the password field to make it a write-only field (won't
+        # be visible in the database), but a required field (required to login)
+        extra_kwargs = {'password': {
+            'write_only': True, 'required': True
+        }}
+
+        def create(self, validated_data):
+            # We call the create_user method on the User object and pass in the validated_data
+            # with the extra_kwargs
+            user = User.objects.create_user(**validated_data)
+            return user
 
 
 class MovieSerializer(serializers.ModelSerializer):

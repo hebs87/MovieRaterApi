@@ -4,10 +4,19 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from .models import Movie, Rating
-from .serializers import MovieSerializer, RatingSerializer
+from .serializers import MovieSerializer, RatingSerializer, UserSerializer
 
 
 # Create your views here.
+class UserViewSet(viewsets.ModelViewSet):
+    """
+    A viewset to render the user data and serializer
+    in an API format
+    """
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+
 class MovieViewSet(viewsets.ModelViewSet):
     """
     A viewset to render the Movie model and serializer
@@ -15,7 +24,7 @@ class MovieViewSet(viewsets.ModelViewSet):
     """
     queryset = Movie.objects.all()
     serializer_class = MovieSerializer
-    authentication_classes = (TokenAuthentication,)
+    authentication_classes = (TokenAuthentication, )
 
     # The decorator stipulates that we are allowing only the POST method on the function,
     # and the detail=True means that we can only call it on a specific movie (ID), so we
