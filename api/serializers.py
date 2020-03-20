@@ -20,13 +20,13 @@ class UserSerializer(serializers.ModelSerializer):
             'required': True
         }}
 
-        def create(self, validated_data):
-            # We call the create_user method on the User object and pass in the validated_data
-            # with the extra_kwargs
-            user = User.objects.create_user(**validated_data)
-            # We create a Token and assign it to the user
-            Token.objects.create(user=user)
-            return user
+    def create(self, validated_data):
+        # We call the create_user method on the User object and pass in the validated_data
+        # with the extra_kwargs
+        user = User.objects.create_user(**validated_data)
+        # We create a Token and assign it to the user
+        Token.objects.create(user=user)
+        return user
 
 
 class MovieSerializer(serializers.ModelSerializer):
