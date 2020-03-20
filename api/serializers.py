@@ -1,6 +1,7 @@
-from django.contrib.auth.models import User
 from rest_framework import serializers
 from .models import Movie, Rating
+from django.contrib.auth.models import User
+from rest_framework.authtoken.models import Token
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -15,13 +16,16 @@ class UserSerializer(serializers.ModelSerializer):
         # We use the extra_kwargs for the password field to make it a write-only field (won't
         # be visible in the database), but a required field (required to login)
         extra_kwargs = {'password': {
-            'write_only': True, 'required': True
+            'write_only': True,
+            'required': True
         }}
 
         def create(self, validated_data):
             # We call the create_user method on the User object and pass in the validated_data
             # with the extra_kwargs
             user = User.objects.create_user(**validated_data)
+            # We create a Token and assign it to the user
+            Token.objects.create(user=user)
             return user
 
 
