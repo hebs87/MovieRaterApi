@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import viewsets, status
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from .models import Movie, Rating
@@ -14,6 +15,7 @@ class MovieViewSet(viewsets.ModelViewSet):
     """
     queryset = Movie.objects.all()
     serializer_class = MovieSerializer
+    authentication_classes = (TokenAuthentication,)
 
     # The decorator stipulates that we are allowing only the POST method on the function,
     # and the detail=True means that we can only call it on a specific movie (ID), so we
@@ -30,9 +32,8 @@ class MovieViewSet(viewsets.ModelViewSet):
             # and we print the movie title if the request is successful
             movie = Movie.objects.get(id=pk)
             stars = request.data['stars']
-            # user = request.user
-            # As we currently don't have authentication, we can just specify a dummy user ID
-            user = User.objects.get(id=1)
+            # user will be the user that is logged in
+            user = request.user
 
             # If we have something in the database for the user and movie combo already, we
             # will update the existing record. If not, then we will create a new record
@@ -74,3 +75,4 @@ class RatingViewSet(viewsets.ModelViewSet):
     """
     queryset = Rating.objects.all()
     serializer_class = RatingSerializer
+    authentication_classes = (TokenAuthentication,)
