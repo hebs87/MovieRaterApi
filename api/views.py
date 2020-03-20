@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from rest_framework import viewsets, status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from .models import Movie, Rating
 from .serializers import MovieSerializer, RatingSerializer, UserSerializer
@@ -15,6 +16,8 @@ class UserViewSet(viewsets.ModelViewSet):
     """
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    # Ensure that the viewset is available for all users
+    permission_classes = (AllowAny, )
 
 
 class MovieViewSet(viewsets.ModelViewSet):
@@ -25,6 +28,8 @@ class MovieViewSet(viewsets.ModelViewSet):
     queryset = Movie.objects.all()
     serializer_class = MovieSerializer
     authentication_classes = (TokenAuthentication, )
+    # Ensure that the viewset is only available if the user is authenticated
+    permission_classes = (IsAuthenticated, )
 
     # The decorator stipulates that we are allowing only the POST method on the function,
     # and the detail=True means that we can only call it on a specific movie (ID), so we
@@ -85,3 +90,21 @@ class RatingViewSet(viewsets.ModelViewSet):
     queryset = Rating.objects.all()
     serializer_class = RatingSerializer
     authentication_classes = (TokenAuthentication,)
+    # Ensure that the viewset is only available if the user is authenticated
+    permission_classes = (IsAuthenticated,)
+
+    def create(self, request, *args, **kwargs):
+        """
+        A method to disable to standard functionality of the built in create
+        method, as we already have this in our MovieViewSet
+        """
+        response = {'message': 'You can\'t create a rating like that'}
+        return Response(response, status=status.HTTP_400_BAD_REQUEST)
+
+    def update(self, request, *args, **kwargs):
+        """
+        A method to disable to standard functionality of the built in update
+        method, as we already have this in our MovieViewSet
+        """
+        response = {'message': 'You can\'t update a rating like that'}
+        return Response(response, status=status.HTTP_400_BAD_REQUEST)
