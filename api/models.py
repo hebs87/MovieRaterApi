@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
+import uuid
 
 
 # Create your models here.
@@ -10,6 +11,7 @@ class Movie(models.Model):
     """
     title = models.CharField(max_length=32)
     description = models.TextField(max_length=360)
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False)
 
     def no_of_ratings(self):
         """
